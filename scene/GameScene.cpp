@@ -3,11 +3,14 @@
 #include <cassert>
 #include "ImGuiManager.h"
 #include "AxisIndicator.h"
+#include "PrimitiveDrawer.h"
 
 
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
+
+	delete sprite_;
 
 	delete debugCamera_;
 
@@ -24,14 +27,28 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
 
-	textureHandle_ = TextureManager::Load("cube/cube.jpg");
+	textureHandle_ = TextureManager::Load("sample.png");
+	sprite_ = Sprite::Create(textureHandle_, {100, 50});
+	textureHandleCube_ = TextureManager::Load("cube/cube.jpg");
+
+	soundDataHandle_ = audio_->LoadWave("fanfare.wav");
+	audio_->PlayWave(soundDataHandle_);
+	voiceHandle_ = audio_->PlayWave(soundDataHandle_, true);
 
 	debugCamera_ = new DebugCamera(1080, 720);
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 }
 
 void GameScene::Update() {
+
+	//スプライト移動
+	Vector2 position = sprite_->GetPosition();
+	position.x += 2.0f;
+	position.y += 1.0f;
+	sprite_->SetPosition(position);
 
 	//デバックウィンドウ表示
 	ImGui::Begin("test");
@@ -48,6 +65,12 @@ void GameScene::Update() {
 	//デバックカメラの更新
 	debugCamera_->Update();
 
+	//音
+	if (input_->TriggerKey(DIK_SPACE)) {
+	 //音声停止
+		audio_->StopWave(voiceHandle_);
+	}
+
 }
 
 void GameScene::Draw() {
@@ -62,8 +85,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-
+	sprite_->Draw();
 	
+	PrimitiveDrawer::GetInstance()->DrawLine3d({0, 0, 0}, {0,10,0},{1.0f,0.0f,0.0f,1.0f});
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -78,7 +102,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
+	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandleCube_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -91,6 +115,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	
+
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
