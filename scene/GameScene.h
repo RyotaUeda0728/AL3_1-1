@@ -59,6 +59,7 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	
+
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
