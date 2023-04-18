@@ -11,8 +11,7 @@
 
 #include "Player.h"
 
-//自キャラ
-Player* player_ = nullptr;
+
 
 /// <summary>
 /// ゲームシーン
@@ -53,6 +52,9 @@ private: // メンバ変数
 	//3Dモデル
 	Model* model_ = nullptr;
 
+	// 自キャラ
+	Player* player_ = nullptr;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
@@ -61,7 +63,7 @@ private: // メンバ変数
 	uint32_t textureHandle_ = 0;
 
 	//ワールドトランスフォーム
-	WorldTransform worldTransform_;
+	//WorldTransform worldTransform_;
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
 

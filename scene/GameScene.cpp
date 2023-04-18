@@ -22,7 +22,7 @@ void GameScene::Initialize() {
 	model_ = Model::Create();
 
 	//ワールドトランスフォーム初期化
-	worldTransform_.Initialize();
+	//worldTransform_.Initialize();
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
@@ -30,7 +30,7 @@ void GameScene::Initialize() {
 	//自キャラの生成
 	player_ = new Player();
 	//自キャラの初期化
-	player_->Initialize();
+	player_->Initialize(model_,textureHandle_);
 
 	
 
@@ -70,10 +70,10 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	//model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 
 	//自キャラの描画
-	player_->Draw();
+	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
