@@ -5,10 +5,10 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	Matrix4x4 result;
 
 	result = {
-		scale.x, 0.0f,	  0.0f,	   0.0f,
-		0.0f,	 scale.y, 0.0f,	   0.0f,
-		0.0f,	 0.0f,	  scale.z, 0.0f,
-		0.0f,	 0.0f,	  0.0f,	   1.0f,
+		scale.x, 0.0f,	  0.0f,		0.0f,
+		0.0f,	 scale.y, 0.0f,		0.0f,
+		0.0f,	 0.0f,	  scale.z,  0.0f,
+		0.0f,	 0.0f,	  0.0f,		1.0f,
 	};
 
 	return result;
@@ -21,10 +21,10 @@ Matrix4x4 MakeRotationXMatrix(float theta) {
 	Matrix4x4 result;
 
 	result = {
-		1.0f,	0.0f,	 0.0f,	  0.0f,
-		0.0f,	cos, sin, 0.0f,
-		0.0f,	-sin,cos, 0.0f,
-		0.0f,	0.0f,	 0.0f,	  1.0f,
+		1.0f,	0.0f,	0.0f,	0.0f,
+		0.0f,	cos,	sin,	0.0f,
+		0.0f,	-sin,	cos,	0.0f,
+		0.0f,	0.0f,	0.0f,	1.0f,
 	};
 
 	return result;
@@ -37,10 +37,10 @@ Matrix4x4 MakeRotationYMatrix(float theta) {
 	Matrix4x4 result;
 
 	result = {
-		cos,0.0f,-sin,0.0f,
-		0.0f,	1.0f,0.0f,   0.0f,	
-		sin,0.0f,cos, 0.0f,
-		0.0f,	0.0f,0.0f,   1.0f,
+		cos,	0.0f,	-sin,	0.0f,
+		0.0f,	1.0f,	0.0f,	0.0f,
+		sin,	0.0f,	cos,	0.0f,
+		0.0f,	0.0f,	0.0f,	1.0f,
 	};
 
 	return result;
@@ -53,10 +53,10 @@ Matrix4x4 MakeRotationZMatrix(float theta) {
 	Matrix4x4 result;
 	
 	result = {
-		cos, sin,0.0f,0.0f,
-		-sin,cos,0.0f,0.0f,
-		0.0f,	 0.0f,  1.0f,0.0f,
-		0.0f,	 0.0f,  0.0f,1.0f,
+		cos,	sin,	0.0f,	0.0f,
+		-sin,	cos,	0.0f,	0.0f,
+		0.0f,	0.0f,	1.0f,	0.0f,
+		0.0f,	0.0f,	0.0f,	1.0f,
 	};
 	
 	return result;
@@ -64,9 +64,9 @@ Matrix4x4 MakeRotationZMatrix(float theta) {
 
 Matrix4x4 MakeTranslateMatrix(Vector3 trans) { 
 	Matrix4x4 result = {
-		1.0f,0.0f,0.0f,0.0f,
-		0.0f,1.0f,0.0f,0.0f,
-		0.0f,0.0f,1.0f,0.0f,
+		1.0f,	0.0f,	0.0f,	0.0f,
+		0.0f,	1.0f,	0.0f,	0.0f,
+		0.0f,	0.0f,	1.0f,	0.0f,
 		trans.x,trans.y,trans.z,1.0f,
 	};
 
