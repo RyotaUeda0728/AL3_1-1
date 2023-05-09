@@ -6,7 +6,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& pos)
 	assert(model);
 	model_ = model;
 
-	texturehandle_ = TextureManager::Load("white1x1.jpg");
+	texturehandle_ = TextureManager::Load("white1x1.png");
 
 	world_.Initialize();
 	world_.translation_ = pos;
