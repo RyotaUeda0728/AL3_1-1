@@ -79,8 +79,8 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rot, const Vecto
 
 	//回転行列
 	Matrix4x4 matRotX = MakeRotationXMatrix(rot.x);
-	Matrix4x4 matRotY = MakeRotationXMatrix(rot.y);
-	Matrix4x4 matRotZ = MakeRotationXMatrix(rot.z);
+	Matrix4x4 matRotY = MakeRotationYMatrix(rot.y);
+	Matrix4x4 matRotZ = MakeRotationZMatrix(rot.z);
 	//合成(Z * X * Y)
 	Matrix4x4 matRot = matRotZ * matRotX * matRotY;
 
