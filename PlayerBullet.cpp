@@ -1,8 +1,7 @@
 ﻿#include "PlayerBullet.h"
 #include <cassert>
 
-void PlayerBullet::Initialize(Model* model, const Vector3& pos) 
-{ 
+void PlayerBullet::Initialize(Model* model, const Vector3& pos,const Vector3& velocity) { 
 	assert(model);
 	model_ = model;
 
@@ -11,14 +10,28 @@ void PlayerBullet::Initialize(Model* model, const Vector3& pos)
 	world_.Initialize();
 	world_.translation_ = pos;
 
+	velocity_ = velocity;
+
 }
 
 void PlayerBullet::Update() 
 { 
-	world_.UpdateMatrix(); 
+
+	//座標を移動させる(1フレーム分の移動量を足しこむ)
+	world_.translation_.x += velocity_.x;
+	world_.translation_.y += velocity_.y;
+	world_.translation_.z += velocity_.z;
+
+
+	//時間経過でデス
+	if (--deathTimer_ <= 0) {
+		isDead_ = true;
+	}
+
+	world_.UpdateMatrix();
 }
 
-void PlayerBullet::Draw(ViewProjection& view)
+void PlayerBullet::Draw(const ViewProjection& viewPrijection)
 { 
-	model_->Draw(world_, view, texturehandle_); 
+	model_->Draw(world_, viewPrijection, texturehandle_); 
 }

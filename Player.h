@@ -3,16 +3,20 @@
 /// 自キャラ
 /// </summary>
 
+#include <list>
+
 #include "WorldTransform.h"
 #include "Model.h"
 #include "ViewProjection.h"
-
 #include "Input.h"
 #include "PlayerBullet.h"
+#include "MathUtility.h"
 
 class Player 
 {
 public:
+	~Player();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -48,4 +52,7 @@ private:
 
 	//弾
 	PlayerBullet* bullet_ = nullptr;
+
+	//弾
+	std::list<PlayerBullet*> bullets_;
 };

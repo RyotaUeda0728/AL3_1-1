@@ -2,6 +2,18 @@
 #include <cassert>
 #include "ImGui.h"
 
+Player::~Player() {
+	//bullet_ の解放
+	//if (bullet_) {
+	//	delete bullet_;
+	//}
+
+	//???????
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	// NULLポインタチェック
 	assert(model);
@@ -26,8 +38,15 @@ void Player::Update()
 	// 押した方向で移動ベクトルを変更(左右)
 	if (input_->PushKey(DIK_LEFT)) {
 		move.x -= kCharacterSpeed;
-	} else if (input_->PushKey(DIK_RIGHT)) {
+	} 
+	if (input_->PushKey(DIK_RIGHT)) {
 		move.x += kCharacterSpeed;
+	}
+	if (input_->PushKey(DIK_UP)) {
+		move.y += kCharacterSpeed;
+	}
+	if (input_->PushKey(DIK_DOWN)) {
+		move.y -= kCharacterSpeed;
 	}
 
 	//旋回
@@ -43,8 +62,11 @@ void Player::Update()
 	Attack();
 
 	//弾更新
-	if (bullet_) {
-		bullet_->Update();
+	//if (bullet_) {
+	//	bullet_->Update();
+	//}
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
 	}
 
 	//範囲制限
@@ -71,6 +93,15 @@ void Player::Update()
 	//行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
 
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 #ifdef _DEBUG
 	//InGui
 	ImGui::SetNextWindowPos({0,0});
@@ -89,19 +120,42 @@ void Player::Draw(ViewProjection& viewProjection)
 { 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
-	if (bullet_) {
-		bullet_->Draw(viewProjection); 
+	//if (bullet_) {
+	//	bullet_->Draw(viewProjection); 
+	//}
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Draw(viewProjection);
 	}
 }
 
 void Player::Attack() 
 { 
 	if (input_->TriggerKey(DIK_SPACE)) {
+
+		//自キャラの座標をコピー
+		//DirectX::XMFLOAT3 position = worldTransform_.translation_;
+
+		//弾があれば解放する
+		//if (bullet_) {
+		//	delete bullet_;
+		//	bullet_ = nullptr;
+		//}
+
+	//弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+
+	//速度ベクトルを自機の向きに合わせて回転する
+		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+
 	//弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
 
 		//弾を登録する
-		bullet_ = newBullet;
+		//bullet_ = newBullet;
+
+		// 弾を登録する
+		bullets_.push_back(newBullet);
 	}
 }
