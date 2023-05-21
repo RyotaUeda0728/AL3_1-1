@@ -8,7 +8,6 @@ Player::~Player() {
 	//	delete bullet_;
 	//}
 
-	//???????
 	for (PlayerBullet* bullet : bullets_) {
 		delete bullet;
 	}
@@ -35,7 +34,7 @@ void Player::Update()
 	Vector3 move = {0,0,0};
 	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.4f;
-	// 押した方向で移動ベクトルを変更(左右)
+	// 押した方向で移動ベクトルを変更(上下左右)
 	if (input_->PushKey(DIK_LEFT)) {
 		move.x -= kCharacterSpeed;
 	} 
