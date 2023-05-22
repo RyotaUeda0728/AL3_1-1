@@ -1,9 +1,12 @@
 ﻿#pragma once
 
+#include <list>
+
 #include "WorldTransform.h"
 #include "Model.h"
 #include "ViewProjection.h"
 #include "PlayerBullet.h"
+#include "EnemyBullet.h"
 #include "MathUtility.h"
 
 /// <summary>
@@ -11,6 +14,11 @@
 /// </summary>
 class Enemy {
 public:
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~Enemy();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -29,7 +37,25 @@ public:
 	/// <param name="view"></param>
 	void Draw(ViewProjection& viewProjection);
 
+	/// <summary>
+	/// 弾発射
+	/// </summary>
+	void Fire();
 
+	/// <summary>
+	/// 発射間隔
+	/// </summary>
+	static const int kFireInterval = 60;
+
+	/// <summary>
+	/// 接近フェーズ初期化
+	/// </summary>
+	void ApproachInitialize();
+
+	/// <summary>
+	/// 接近フェーズ更新
+	/// </summary>
+	void ApproachUpdate();
 
 	private:
 	// ワールド変換データ
@@ -49,5 +75,14 @@ public:
 
 	//フェーズ
 	Phase phase_ = Phase::Approach;
+
+	// 弾
+	EnemyBullet* bullet_ = nullptr;
+
+	// 弾
+	std::list<EnemyBullet*> bullets_;
+
+	//発射タイマー
+	int32_t FireTimer = kFireInterval;
 
 };

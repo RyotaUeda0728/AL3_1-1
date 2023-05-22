@@ -3,8 +3,6 @@
 #include <cassert>
 #include "AxisIndicator.h"
 
-GameScene::GameScene() {}
-
 GameScene::~GameScene() { 
 	delete model_; 
 	delete player_;
