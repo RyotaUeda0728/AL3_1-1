@@ -9,6 +9,9 @@
 #include "EnemyBullet.h"
 #include "MathUtility.h"
 
+//自機クラスの前方宣言
+class Player;
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -57,6 +60,18 @@ public:
 	/// </summary>
 	void ApproachUpdate();
 
+	/// <summary>
+	/// 自キャラの情報を持ってくる
+	/// </summary>
+	/// <param name="player"></param>
+	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetWorldPosition();
+
 	private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -84,5 +99,8 @@ public:
 
 	//発射タイマー
 	int32_t FireTimer = kFireInterval;
+
+	//自キャラ
+	Player* player_ = nullptr;
 
 };
