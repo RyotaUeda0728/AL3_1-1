@@ -26,8 +26,21 @@ public:
 
 	bool IsDead() const { return isDead_; }
 
-	private:
-	WorldTransform world_;
+	/// <summary>
+	/// 衝突を検出したら呼び出されるコールバック関数
+	/// </summary>
+	void OnCollision();
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	Vector3 GetWorldPosition();
+
+	// 当たり判定のための半径を設定
+	const float GetRadius() { return radius_; }
+
+private:
+	WorldTransform worldTransform_;
 	Model* model_;
 	uint32_t texturehandle_;
 	//速度
@@ -39,4 +52,6 @@ public:
 	//デスフラグ
 	bool isDead_ = false;
 
+	// 当たり判定のための半径
+	const float radius_ = 1.0f;
 };

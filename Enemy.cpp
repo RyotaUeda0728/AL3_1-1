@@ -53,6 +53,12 @@ void Enemy::Update()
 		//移動(ベクトルを加算)
 		worldTransform_.translation_.x -= kEnemyLeaveSpeed;
 		worldTransform_.translation_.y += kEnemyLeaveSpeed;
+		if (worldTransform_.translation_.y >= 25.0f) {
+			worldTransform_.translation_.x = 10.0f;
+			worldTransform_.translation_.y = 2.0f;
+			worldTransform_.translation_.z = 60.0f;
+			phase_ = Phase::Approach;
+		}
 		break;
 	}
 
@@ -172,3 +178,5 @@ Vector3 Enemy::GetWorldPosition()
 
 	return worldPos;
 }
+
+void Enemy::OnCollision() {}

@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 #include <cassert>
 #include "ImGui.h"
+#include "Player.h"
 
 Player::~Player() {
 	//bullet_ の解放
@@ -169,4 +170,9 @@ Vector3 Player::GetWorldPosition()
 	worldPos.z = worldTransform_.translation_.z;
 
 	return worldPos; 
+}
+
+void Player::OnCollision() 
+{
+
 }

@@ -72,7 +72,18 @@ public:
 	/// <returns></returns>
 	Vector3 GetWorldPosition();
 
-	private:
+	/// <summary>
+	/// 衝突を検出したら呼び出されるコールバック関数
+	/// </summary>
+	void OnCollision();
+
+	// 弾リストを取得
+	const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
+
+	// 当たり判定のための半径を設定
+	const float GetRadius() { return radius_; }
+
+private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 
@@ -102,5 +113,8 @@ public:
 
 	//自キャラ
 	Player* player_ = nullptr;
+
+	// 当たり判定のための半径
+	const float radius_ = 1.0f;
 
 };
