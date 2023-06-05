@@ -8,6 +8,8 @@ GameScene::~GameScene() {
 	delete player_;
 	delete enemy_;
 	delete debugCamera_;
+	delete modelSkydome_;
+	delete skydome_;
 }
 
 void GameScene::Initialize() {
@@ -21,6 +23,10 @@ void GameScene::Initialize() {
 
 	//3Dモデルの生成
 	model_ = Model::Create();
+
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	skydome_ = new Skydome();
+	skydome_->Initialize(modelSkydome_);
 
 	//ワールドトランスフォーム初期化
 	//worldTransform_.Initialize();
@@ -60,6 +66,9 @@ void GameScene::Update()
 	if (enemy_) {//nullかどうかをチェック
 		enemy_->Update();
 	}
+
+	//スカイドームの更新
+	skydome_->Update();
 
 	#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_BACKSPACE)) {
@@ -116,6 +125,9 @@ void GameScene::Draw() {
 		enemy_->Draw(viewProjection_);
 	}
 
+	//スカイドームの描画
+	skydome_->Draw(viewProjection_);
+	
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
