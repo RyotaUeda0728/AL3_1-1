@@ -20,7 +20,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model* model,uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosition);
 
 	/// <summary>
 	/// 更新
@@ -53,6 +53,12 @@ public:
 
 	//当たり判定のための半径を設定
 	const float GetRadius() { return radius_; }
+
+	/// <summary>
+	/// 親となるワールドトランスフォームをセット
+	/// </summary>
+	/// <param name="parent"></param>
+	void SetParent(const WorldTransform* parent);
 
 private:
 	//ワールド変換データ

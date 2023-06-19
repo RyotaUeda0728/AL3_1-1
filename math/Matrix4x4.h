@@ -21,6 +21,10 @@ Matrix4x4 MakeRotationZMatrix(float theta);
 //平行移動
 Matrix4x4 MakeTranslateMatrix(Vector3 trans);
 
+//逆行列
+//float Det(Matrix4x4 matrix);
+Matrix4x4 Inverse(Matrix4x4 matrix);
+
 //アフィン変換行列
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rot, const Vector3& trans);
 

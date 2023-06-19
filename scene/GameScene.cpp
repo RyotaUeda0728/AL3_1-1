@@ -28,21 +28,25 @@ void GameScene::Initialize() {
 	skydome_ = new Skydome();
 	skydome_->Initialize(modelSkydome_);
 
+	//レールカメラ
+	railCamera_ = new RailCamera();
+	railCamera_->Initialize({0.f, 0.f, -10.f}, {0.f, 0.f, 0.f});
+
 	//ワールドトランスフォーム初期化
 	//worldTransform_.Initialize();
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
-
 	//自キャラの生成
 	player_ = new Player();
 	//自キャラの初期化
-	player_->Initialize(model_,textureHandle_);
+	player_->SetParent(&railCamera_->GetWorldTransform());
 
 	//敵キャラの生成
 	enemy_ = new Enemy();
 	//敵キャラの初期化
 	enemy_->Initialize(model_);
+	enemy_->SetPlayer(player_);
 
 	//敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
@@ -55,6 +59,13 @@ void GameScene::Initialize() {
 	//軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
+	//自キャラとレールカメラの親子関係を結ぶ
+	player_->SetParent(&railCamera_->GetWorldTransform());
+
+	//自機をカメラからずらす
+	Vector3 playerPosition(0, -10.0f, 50.0f);
+	player_->Initialize(model_, textureHandle_,playerPosition);
+	
 }
 
 void GameScene::Update() 
@@ -70,6 +81,9 @@ void GameScene::Update()
 	//スカイドームの更新
 	skydome_->Update();
 
+	//ロールカメラ
+	railCamera_->Update();
+
 	#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_BACKSPACE)) {
 		isDebugCameraActive_ = true;
@@ -81,8 +95,10 @@ void GameScene::Update()
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
-	} else {
-		viewProjection_.UpdateMatrix();
+	} else if(!isDebugCameraActive_){
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
 	}
 
 	//当たり判定
