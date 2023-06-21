@@ -11,6 +11,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "EnemyBullet.h"
 #include "Skydome.h"
 #include "DebugCamera.h"
 #include "RailCamera.h"
@@ -47,6 +48,15 @@ public: // メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// 敵弾を追加する
+	/// </summary>
+	/// <param name="enemyBullet"></param>
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+
+	void AddEnemy(Vector3 pos);
+
+	/// <summary>
 	/// 衝突判定と応答
 	/// </summary>
 	void CheckAllCollision();
@@ -70,7 +80,8 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 
 	//敵キャラ
-	Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemy_;
+	std::list<EnemyBullet*> enemyBullets;
 
 	//デバックカメラ
 	DebugCamera* debugCamera_ = nullptr;

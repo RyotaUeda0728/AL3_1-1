@@ -12,6 +12,9 @@
 //自機クラスの前方宣言
 class Player;
 
+//GameSceneの前方宣言（苦肉の策）
+class GameScene;
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -27,7 +30,7 @@ public:
 	/// </summary>
 	/// <param name="model"></param>
 	/// <param name="pos"></param>
-	void Initialize(Model* model);
+	void Initialize(Model* model,Vector3 pos);
 
 	/// <summary>
 	/// 更新
@@ -60,11 +63,19 @@ public:
 	/// </summary>
 	void ApproachUpdate();
 
+	bool GetIsDead() { return isDead_; }
+
 	/// <summary>
 	/// 自キャラの情報を持ってくる
 	/// </summary>
 	/// <param name="player"></param>
 	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
+	/// 敵キャラにゲームシーンの情報を持ってくる
+	/// </summary>
+	/// <param name="scene"></param>
+	void SetGameScene(GameScene* scene) { gameScene = scene; }
 
 	/// <summary>
 	/// ワールド座標を取得
@@ -78,7 +89,7 @@ public:
 	void OnCollision();
 
 	// 弾リストを取得
-	const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
+	//const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
 
 	// 当たり判定のための半径を設定
 	const float GetRadius() { return radius_; }
@@ -106,7 +117,7 @@ private:
 	EnemyBullet* bullet_ = nullptr;
 
 	// 弾
-	std::list<EnemyBullet*> bullets_;
+	//std::list<EnemyBullet*> bullets_;
 
 	//発射タイマー
 	int32_t FireTimer = kFireInterval;
@@ -117,4 +128,14 @@ private:
 	// 当たり判定のための半径
 	const float radius_ = 1.0f;
 
+	// ゲームシーン
+	GameScene* gameScene = nullptr;
+
+	// 寿命<frm>
+	static const int32_t kLifeTime = 60 * 5;
+	//デスタイマー
+	int32_t deathTimer_ = kLifeTime;
+	//死亡フラグ
+	bool isDead_ = false;
+	
 };

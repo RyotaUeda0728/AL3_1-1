@@ -1,15 +1,19 @@
 ﻿#include "Enemy.h"
 #include "Player.h"
+#include "GameScene.h"
 #include <cassert>
 
 Enemy::~Enemy() 
 { 
-	for (EnemyBullet* bullet : bullets_) {
-		delete bullet;
-	}
+	//for (EnemyBullet* bullet : bullets_) {
+	//	delete bullet;
+	//}
+
+	//delete state_;
+	//state_ = nullptr;
 }
 
-void Enemy::Initialize(Model* model) {
+void Enemy::Initialize(Model* model,Vector3 pos) {
 	// NULLポインタチェック
 	assert(model);
 
@@ -20,7 +24,8 @@ void Enemy::Initialize(Model* model) {
 	worldTransform_.Initialize();
 
 	// 敵の初期座標
-	Vector3 pos = {10, 2, 60};
+	Vector3 Pos = {pos.x, pos.y, pos.z};
+	//Vector3 position = {10, 2, 60};
 	worldTransform_.translation_ = pos;
 
 	// テクスチャ読み込み
@@ -50,6 +55,11 @@ void Enemy::Update()
 		ApproachUpdate(); 
 		break;
 	case Phase::Leave:
+
+		if (deathTimer_-- < 0) {
+			isDead_ = true;
+		}
+
 		//移動(ベクトルを加算)
 		worldTransform_.translation_.x -= kEnemyLeaveSpeed;
 		worldTransform_.translation_.y += kEnemyLeaveSpeed;
@@ -69,17 +79,17 @@ void Enemy::Update()
 
 
 	//弾(複数の時)
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Update();
-	}
-	// デスフラグの立った弾を削除
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
+	//for (EnemyBullet* bullet : enemyBullets) {
+	//	bullet->Update();
+	//}
+	//// デスフラグの立った弾を削除
+	//bullets_.remove_if([](EnemyBullet* bullet) {
+	//	if (bullet->IsDead()) {
+	//		delete bullet;
+	//		return true;
+	//	}
+	//	return false;
+	//});
 
 	worldTransform_.UpdateMatrix();
 }
@@ -92,9 +102,9 @@ void Enemy::Draw(ViewProjection& viewProjection)
 	//}
 
 	//弾(複数の時)
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
+	//for (EnemyBullet* bullet : bullets_) {
+	//	bullet->Draw(viewProjection);
+	//}
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_); 
 }
@@ -144,7 +154,8 @@ void Enemy::Fire() {
 		// bullet_ = newBullet;
 
 		// 弾を登録する
-		bullets_.push_back(newBullet);
+		//bullets_.push_back(newBullet);
+	    gameScene->AddEnemyBullet(newBullet);
 	//}
 }
 

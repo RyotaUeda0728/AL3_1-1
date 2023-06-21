@@ -4,9 +4,16 @@
 #include "AxisIndicator.h"
 
 GameScene::~GameScene() { 
+
+	for (EnemyBullet* bullet : enemyBullets) {
+	delete bullet;
+	}
+
 	delete model_; 
 	delete player_;
-	delete enemy_;
+	for (Enemy* enemy : enemy_) {
+		delete enemy;
+	}
 	delete debugCamera_;
 	delete modelSkydome_;
 	delete skydome_;
@@ -42,14 +49,11 @@ void GameScene::Initialize() {
 	//自キャラの初期化
 	player_->SetParent(&railCamera_->GetWorldTransform());
 
-	//敵キャラの生成
-	enemy_ = new Enemy();
-	//敵キャラの初期化
-	enemy_->Initialize(model_);
-	enemy_->SetPlayer(player_);
-
 	//敵キャラに自キャラのアドレスを渡す
-	enemy_->SetPlayer(player_);
+	//enemy_->SetPlayer(player_);
+	for (Enemy* enemy : enemy_) {
+		enemy->SetPlayer(player_);
+	}
 
 	//デバックカメラの生成
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth,WinApp::kWindowHeight);
@@ -65,7 +69,13 @@ void GameScene::Initialize() {
 	//自機をカメラからずらす
 	Vector3 playerPosition(0, -10.0f, 50.0f);
 	player_->Initialize(model_, textureHandle_,playerPosition);
-	
+
+	//敵の追加はここ
+	AddEnemy({0.f, 5.f, 30.f});
+
+	AddEnemy({-6.0f, 5.f, 30.f});
+
+
 }
 
 void GameScene::Update() 
@@ -73,10 +83,31 @@ void GameScene::Update()
 	//自キャラの更新
 	player_->Update();
 
+	// 敵
+	enemy_.remove_if([](Enemy* enemy) {
+		if (enemy->GetIsDead()) {
+			delete enemy;
+			return true;
+		}
+		return false;
+	});
 	//敵キャラの更新
-	if (enemy_) {//nullかどうかをチェック
-		enemy_->Update();
+	for(Enemy* enemy : enemy_) {
+		enemy->Update();
 	}
+
+	// 弾(複数の時)
+	for (EnemyBullet* bullet : enemyBullets) {
+		bullet->Update();
+	}
+	// デスフラグの立った弾を削除
+	enemyBullets.remove_if([](EnemyBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
 
 	//スカイドームの更新
 	skydome_->Update();
@@ -136,9 +167,14 @@ void GameScene::Draw() {
 	//自キャラの描画
 	player_->Draw(viewProjection_);
 
-	//敵キャラの描画
-	if (enemy_) { // nullかどうかをチェック
-		enemy_->Draw(viewProjection_);
+	// 弾(複数の時)
+	for (EnemyBullet* bullet : enemyBullets) {
+		bullet->Draw(viewProjection_);
+	}
+
+	for (Enemy* enemy : enemy_) {
+		// 敵キャラの描画
+		enemy->Draw(viewProjection_);
 	}
 
 	//スカイドームの描画
@@ -162,46 +198,39 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
-void GameScene::CheckAllCollision() 
-{
-	//衝突判定AとBの座標
+void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) 
+{ 
+	//リストに登録する
+	enemyBullets.push_back(enemyBullet); 
+}
+
+void GameScene::AddEnemy(Vector3 pos) {
+	// 敵キャラの生成
+	Enemy* obj = new Enemy();
+	// 敵キャラの初期化
+	obj->Initialize(model_,pos);
+	obj->SetPlayer(player_);
+	obj->SetGameScene(this);
+
+	enemy_.push_back(obj);
+}
+
+void GameScene::CheckAllCollision() {
+	// 衝突判定AとBの座標
 	Vector3 posA, posB;
 
-	//自弾リストの取得
+	// 自弾リストの取得
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 
-	//敵弾リストの取得
-	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
+	// 敵弾リストの取得
+	const std::list<EnemyBullet*>& enemyBullet = enemyBullets;
 
-	#pragma region //自キャラと敵弾の当たり判定
-	//自キャラの座標
+#pragma region // 自キャラと敵弾の当たり判定
+	// 自キャラの座標
 	posA = player_->GetWorldPosition();
-	//自キャラと敵弾全ての当たり判定
-	for (EnemyBullet* bullet : enemyBullets) {
-	//敵弾の座標
-		posB = bullet->GetWorldPosition();
-
-		float distance = (posB.x - posA.x) * (posB.x - posA.x) +
-						 (posB.y - posA.y) * (posB.y - posA.y) +
-						 (posB.z - posA.z) * (posB.z - posA.z);
-
-		//球と球の交差判定
-		if (distance <= powf(player_->GetRadius() + bullet->GetRadius(),2.0f)) {
-		//自キャラの衝突時コールバックを呼び出す
-			player_->OnCollision();
-			//敵弾の衝突時コールバックを呼び出す
-			bullet->OnCollision();
-		
-		}
-	}
-	#pragma endregion
-
-	#pragma region //自弾と敵キャラの当たり判定
-	// 敵キャラの座標
-	posA = enemy_->GetWorldPosition();
-	// 敵キャラと自弾全ての当たり判定
-	for (PlayerBullet* bullet : playerBullets) {
-		// 自弾の座標
+	// 自キャラと敵弾全ての当たり判定
+	for (EnemyBullet* bullet : enemyBullet) {
+		// 敵弾の座標
 		posB = bullet->GetWorldPosition();
 
 		float distance = (posB.x - posA.x) * (posB.x - posA.x) +
@@ -209,11 +238,35 @@ void GameScene::CheckAllCollision()
 		                 (posB.z - posA.z) * (posB.z - posA.z);
 
 		// 球と球の交差判定
-		if (distance <= powf(enemy_->GetRadius() + bullet->GetRadius(),2.0f)) {
-			// 敵キャラの衝突時コールバックを呼び出す
-			enemy_->OnCollision();
+		if (distance <= powf(player_->GetRadius() + bullet->GetRadius(), 2.0f)) {
+			// 自キャラの衝突時コールバックを呼び出す
+			player_->OnCollision();
 			// 敵弾の衝突時コールバックを呼び出す
 			bullet->OnCollision();
+		}
+	}
+#pragma endregion
+
+#pragma region // 自弾と敵キャラの当たり判定
+	// 敵キャラの座標
+	for (Enemy* enemy : enemy_){
+			posA = enemy->GetWorldPosition();
+		// 敵キャラと自弾全ての当たり判定
+		for (PlayerBullet* bullet : playerBullets) {
+			// 自弾の座標
+			posB = bullet->GetWorldPosition();
+
+			float distance = (posB.x - posA.x) * (posB.x - posA.x) +
+			                 (posB.y - posA.y) * (posB.y - posA.y) +
+			                 (posB.z - posA.z) * (posB.z - posA.z);
+
+			// 球と球の交差判定
+			if (distance <= powf(enemy->GetRadius() + bullet->GetRadius(), 2.0f)) {
+				// 敵キャラの衝突時コールバックを呼び出す
+				enemy->OnCollision();
+				// 敵弾の衝突時コールバックを呼び出す
+				bullet->OnCollision();
+			}
 		}
 	}
 	#pragma endregion
@@ -223,19 +276,19 @@ void GameScene::CheckAllCollision()
 	for (PlayerBullet* playerBullet : playerBullets) {
 		posA = playerBullet->GetWorldPosition();
 		// 敵弾全て
-		for (EnemyBullet* enemyBullet : enemyBullets) {
-			posB = enemyBullet->GetWorldPosition();
+		for (EnemyBullet* bullets : enemyBullets) {
+			posB = bullets->GetWorldPosition();
 
 			float distance = (posB.x - posA.x) * (posB.x - posA.x) +
 							 (posB.y - posA.y) * (posB.y - posA.y) +
 							 (posB.z - posA.z) * (posB.z - posA.z);
 
 			// 球と球の交差判定
-			if (distance <= powf(playerBullet->GetRadius() + enemyBullet->GetRadius(), 2.0f)) {
+			if (distance <= powf(playerBullet->GetRadius() + bullets->GetRadius(), 2.0f)) {
 				// 自弾の衝突時コールバックを呼び出す
 				playerBullet->OnCollision();
 				// 敵弾の衝突時コールバックを呼び出す
-				enemyBullet->OnCollision();
+				bullets->OnCollision();
 			}
 		}
 	}

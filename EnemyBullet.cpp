@@ -7,8 +7,8 @@ void EnemyBullet::Initialize(Model* model, const Vector3& pos, const Vector3& ve
 
 	texturehandle_ = TextureManager::Load("white1x1.png");
 
-	worldTransform_.Initialize();
 	worldTransform_.translation_ = pos;
+	worldTransform_.Initialize();
 
 	velocity_ = velocity;
 }
@@ -28,8 +28,8 @@ void EnemyBullet::Update() {
 	worldTransform_.UpdateMatrix();
 }
 
-void EnemyBullet::Draw(const ViewProjection& viewPrijection) {
-	model_->Draw(worldTransform_, viewPrijection, texturehandle_);
+void EnemyBullet::Draw(const ViewProjection& viewProjection) {
+	model_->Draw(worldTransform_, viewProjection, texturehandle_);
 }
 
 Vector3 EnemyBullet::GetWorldPosition() { 
