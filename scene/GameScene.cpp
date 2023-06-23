@@ -71,11 +71,11 @@ void GameScene::Initialize() {
 	player_->Initialize(model_, textureHandle_,playerPosition);
 
 	//敵の追加はここ
-	AddEnemy({0.f, 5.f, 30.f});
+	//AddEnemy({0.f, 5.f, 30.f});
+	//
+	//AddEnemy({-6.0f, 5.f, 30.f});
 
-	AddEnemy({-6.0f, 5.f, 30.f});
-
-
+	LoadEnemyPopData();
 }
 
 void GameScene::Update() 
@@ -91,6 +91,8 @@ void GameScene::Update()
 		}
 		return false;
 	});
+	// 敵キャラ生成の更新
+	UpdateEnemyPopCommands();
 	//敵キャラの更新
 	for(Enemy* enemy : enemy_) {
 		enemy->Update();
@@ -293,4 +295,84 @@ void GameScene::CheckAllCollision() {
 		}
 	}
 	#pragma endregion
+}
+
+void GameScene::LoadEnemyPopData() 
+{
+	// ファイルを開く
+	std::ifstream file;
+	file.open("Resources/enemyPop.csv");
+	assert(file.is_open());
+
+	// ファイルの内容を文字列ストリームにコピー
+	enemyPopCommands << file.rdbuf();
+
+	// ファイルを閉じる
+	file.close();
+}
+
+void GameScene::UpdateEnemyPopCommands() 
+{
+	// 待機処理
+	if (IsWaitFlag_) {
+		waitTimer_--;
+		if (waitTimer_ <= 0) {
+		// 待機フラグ
+			IsWaitFlag_ = false;
+		}
+		return;
+	}
+
+
+	// 1行分の文字列を入れる変数
+	std::string line;
+
+	// コマンド実行ループ
+	while (getline(enemyPopCommands, line)) {
+	// 1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream line_stream(line);
+
+		std::string word;
+		// ,区切りで行の先頭文字列を取得
+		getline(line_stream,word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			// コメント行を飛ばす
+			continue;
+		}
+
+		// POPコマンド
+		if (word.find("POP") == 0) {
+			// x座標
+			getline(line_stream, word, ',');
+			float x = (float)std::atof(word.c_str());
+
+			// y座標
+			getline(line_stream, word, ',');
+			float y = (float)std::atof(word.c_str());
+
+			// z座標
+			getline(line_stream, word, ',');
+			float z = (float)std::atof(word.c_str());
+
+			// 敵を発生させる
+			AddEnemy(Vector3(x, y, z));
+
+		} else if (word.find("WAIT") == 0) {
+			getline(line_stream, word, ',');
+
+			// 待ち時間
+			int32_t waitTime = atoi(word.c_str());
+
+			// 待機開始
+			IsWaitFlag_ = true;
+			waitTimer_ = waitTime;
+
+			// コマンドループを抜ける
+			break;
+		}
+
+	}
+
 }

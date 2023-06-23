@@ -16,6 +16,8 @@
 #include "DebugCamera.h"
 #include "RailCamera.h"
 
+#include <fstream>
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -56,10 +58,22 @@ public: // メンバ関数
 
 	void AddEnemy(Vector3 pos);
 
+private:
+
 	/// <summary>
 	/// 衝突判定と応答
 	/// </summary>
 	void CheckAllCollision();
+
+	/// <summary>
+	/// 敵発生データの読み込み
+	/// </summary>
+	void LoadEnemyPopData();
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -101,6 +115,14 @@ private: // メンバ変数
 	//デバックカメラ有効
 	bool isDebugCameraActive_ = false;
 
+	// 敵発生コマンド
+	std::stringstream enemyPopCommands;
+
+	// 待機中フラグ
+	bool IsWaitFlag_ = false;
+
+	// 待機タイマー
+	int waitTimer_ = 0;
 
 };
 
