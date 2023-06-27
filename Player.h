@@ -11,6 +11,8 @@
 #include "Input.h"
 #include "PlayerBullet.h"
 #include "MathUtility.h"
+#include "Sprite.h"
+#include "WinApp.h"
 
 class Player 
 {
@@ -25,7 +27,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 描画
@@ -60,6 +62,17 @@ public:
 	/// <param name="parent"></param>
 	void SetParent(const WorldTransform* parent);
 
+	/// <summary>
+	/// UI描画
+	/// </summary>
+	void DrawUI();
+
+	/// <summary>
+	/// 3Dレティクルの座標を持ってくる
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetWorldTransform3DReticle();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -81,4 +94,11 @@ private:
 
 	//当たり判定のための半径
 	const float radius_ = 1.0f;
+
+	// 3Dレティクル用ワールドトランスフォーム
+	WorldTransform worldTransform3DReticle_;
+
+	// 2Dレティクル用スプライト
+	Sprite* sprite2DReticle_ = nullptr;
+
 };

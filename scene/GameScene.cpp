@@ -75,13 +75,18 @@ void GameScene::Initialize() {
 	//
 	//AddEnemy({-6.0f, 5.f, 30.f});
 
+	// 敵の追加
 	LoadEnemyPopData();
+
+
+	// レティクルのテクスチャ
+	//TextureManager::Load("Resources/target.png");
 }
 
 void GameScene::Update() 
 { 
 	//自キャラの更新
-	player_->Update();
+	player_->Update(viewProjection_);
 
 	// 敵
 	enemy_.remove_if([](Enemy* enemy) {
@@ -193,6 +198,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
