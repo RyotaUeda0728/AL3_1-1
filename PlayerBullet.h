@@ -53,5 +53,5 @@ private:
 	bool isDead_ = false;
 
 	// 当たり判定のための半径
-	const float radius_ = 1.0f;
+	const float radius_ = 1.5f;
 };

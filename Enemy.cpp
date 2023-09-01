@@ -23,13 +23,16 @@ void Enemy::Initialize(Model* model,Vector3 pos) {
 	// ワールド初期化
 	worldTransform_.Initialize();
 
+	// シングルトンインスタンスを取得する
+	//input_ = Input::GetInstance();
+
 	// 敵の初期座標
 	Vector3 Pos = {pos.x, pos.y, pos.z};
 	//Vector3 position = {10, 2, 60};
 	worldTransform_.translation_ = pos;
 
 	// テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("white1x1.png");
+	textureHandle_ = TextureManager::Load("enemy.png");
 
 	//接近フェーズ初期化
 	ApproachInitialize();
@@ -39,37 +42,41 @@ void Enemy::Initialize(Model* model,Vector3 pos) {
 void Enemy::Update() 
 {
 	// 敵の移動速さ
-	const float kEnemyApproachSpeed = 0.2f;
-	const float kEnemyLeaveSpeed = 0.3f;
+	const float kEnemyApproachSpeed = 0.1f;
+	const float kEnemyLeaveSpeed = 0.6f;
 	//敵の移動
-	switch (phase_) {
+	if (player_->IsTitle() == false) {// タイトル画面じゃなければ
+
+		switch (phase_) {
 		case Phase::Approach:
-	default:
-		//移動(ベクトルを加算)
-		worldTransform_.translation_.z -= kEnemyApproachSpeed;
-		//既定の位置に用達したら離脱
-		if (worldTransform_.translation_.z < 0.0f) {
-			phase_ = Phase::Leave;
-		}
-		//弾発射
-		ApproachUpdate(); 
-		break;
-	case Phase::Leave:
+		default:
+			// 移動(ベクトルを加算)
+			worldTransform_.translation_.z -= kEnemyApproachSpeed;
+			// 既定の位置に用達したら離脱
+			if (worldTransform_.translation_.z < 55.0f) {
+				phase_ = Phase::Leave;
+			}
+			// 弾発射
+			ApproachUpdate();
+			break;
+		case Phase::Leave:
 
-		if (deathTimer_-- < 0) {
-			isDead_ = true;
+			if (deathTimer_-- < 0) {
+				isDead_ = true;
+			}
+
+			// 移動(ベクトルを加算)
+			worldTransform_.translation_.z -= kEnemyLeaveSpeed;
+			// if (worldTransform_.translation_.y >= 25.0f) {
+			//	worldTransform_.translation_.x = 10.0f;
+			//	worldTransform_.translation_.y = 2.0f;
+			//	worldTransform_.translation_.z = 60.0f;
+			//	phase_ = Phase::Approach;
+			// }
+			break;
 		}
 
-		//移動(ベクトルを加算)
-		worldTransform_.translation_.x -= kEnemyLeaveSpeed;
-		worldTransform_.translation_.y += kEnemyLeaveSpeed;
-		if (worldTransform_.translation_.y >= 25.0f) {
-			worldTransform_.translation_.x = 10.0f;
-			worldTransform_.translation_.y = 2.0f;
-			worldTransform_.translation_.z = 60.0f;
-			phase_ = Phase::Approach;
-		}
-		break;
+		worldTransform_.UpdateMatrix();
 	}
 
 	//弾(一個の時)
@@ -91,7 +98,6 @@ void Enemy::Update()
 	//	return false;
 	//});
 
-	worldTransform_.UpdateMatrix();
 }
 
 void Enemy::Draw(ViewProjection& viewProjection)
@@ -122,7 +128,7 @@ void Enemy::Fire() {
 		// }
 
 		// 弾の速度
-		const float kBulletSpeed = -2.0f;
+		const float kBulletSpeed = -0.1f;
 		//Vector3 velocity(0, 0, kBulletSpeed);
 
 		//初期化(一個だけのとき)

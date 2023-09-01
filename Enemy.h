@@ -104,6 +104,9 @@ private:
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 
+	// キーボード入力
+	//Input* input_ = nullptr;
+
 	//行動フェーズ
 	enum class Phase {
 		Approach,//接近する

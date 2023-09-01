@@ -55,7 +55,10 @@ public: // メンバ関数
 	/// <param name="enemyBullet"></param>
 	void AddEnemyBullet(EnemyBullet* enemyBullet);
 
-
+	/// <summary>
+	/// 敵初期化？
+	/// </summary>
+	/// <param name="pos"></param>
 	void AddEnemy(Vector3 pos);
 
 private:
@@ -125,6 +128,3 @@ private: // メンバ変数
 	int waitTimer_ = 0;
 
 };
-
-
-

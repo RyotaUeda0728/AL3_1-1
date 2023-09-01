@@ -7,6 +7,10 @@
 #include "TextureManager.h"
 #include "WinApp.h"
 
+#include "Input.h"
+
+#include <fstream>
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WinApp* win = nullptr;
@@ -55,6 +59,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	primitiveDrawer = PrimitiveDrawer::GetInstance();
 	primitiveDrawer->Initialize();
+
 #pragma endregion
 
 	// ゲームシーンの初期化
@@ -63,6 +68,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// メインループ
 	while (true) {
+
+		// リトライ処理
+		if (input->TriggerKey(DIK_RETURN)) {
+			gameScene = new GameScene();
+			gameScene->Initialize();
+		}
+
 		// メッセージ処理
 		if (win->ProcessMessage()) {
 			break;
@@ -84,7 +96,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ゲームシーンの描画
 		gameScene->Draw();
 		// 軸表示の描画
-		axisIndicator->Draw();
+		//axisIndicator->Draw();
 		// プリミティブ描画のリセット
 		primitiveDrawer->Reset();
 		// ImGui描画

@@ -5,11 +5,11 @@ void EnemyBullet::Initialize(Model* model, const Vector3& pos, const Vector3& ve
 	assert(model);
 	model_ = model;
 
-	texturehandle_ = TextureManager::Load("white1x1.png");
+	texturehandle_ = TextureManager::Load("enemyBullet.png");
 
 	worldTransform_.translation_ = pos;
 	worldTransform_.Initialize();
-
+	
 	velocity_ = velocity;
 }
 

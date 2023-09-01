@@ -67,7 +67,7 @@ void GameScene::Initialize() {
 	player_->SetParent(&railCamera_->GetWorldTransform());
 
 	//自機をカメラからずらす
-	Vector3 playerPosition(0, -10.0f, 50.0f);
+	Vector3 playerPosition(0, 0, 50.0f);
 	player_->Initialize(model_, textureHandle_,playerPosition);
 
 	//敵の追加はここ
@@ -78,43 +78,47 @@ void GameScene::Initialize() {
 	// 敵の追加
 	LoadEnemyPopData();
 
-
 	// レティクルのテクスチャ
 	//TextureManager::Load("Resources/target.png");
 }
 
-void GameScene::Update() 
-{ 
+void GameScene::Update() { 
+
 	//自キャラの更新
 	player_->Update(viewProjection_);
 
-	// 敵
-	enemy_.remove_if([](Enemy* enemy) {
-		if (enemy->GetIsDead()) {
-			delete enemy;
-			return true;
-		}
-		return false;
-	});
-	// 敵キャラ生成の更新
-	UpdateEnemyPopCommands();
-	//敵キャラの更新
-	for(Enemy* enemy : enemy_) {
-		enemy->Update();
-	}
+	//if (player_->IsDead()) {
+	//}
 
-	// 弾(複数の時)
-	for (EnemyBullet* bullet : enemyBullets) {
-		bullet->Update();
-	}
-	// デスフラグの立った弾を削除
-	enemyBullets.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
+	// 敵
+	if (player_->IsTitle() == false) {// タイトルじゃなければ
+		enemy_.remove_if([](Enemy* enemy) {
+			if (enemy->GetIsDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+		// 敵キャラ生成の更新
+		UpdateEnemyPopCommands();
+		// 敵キャラの更新
+		for (Enemy* enemy : enemy_) {
+			enemy->Update();
 		}
-		return false;
-	});
+
+		// 弾(複数の時)
+		for (EnemyBullet* bullet : enemyBullets) {
+			bullet->Update();
+		}
+		// デスフラグの立った弾を削除
+		enemyBullets.remove_if([](EnemyBullet* bullet) {
+			if (bullet->IsDead()) {
+				delete bullet;
+				return true;
+			}
+			return false;
+		});
+	}
 
 	//スカイドームの更新
 	skydome_->Update();
@@ -200,6 +204,8 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->DrawUI();
+
+	
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

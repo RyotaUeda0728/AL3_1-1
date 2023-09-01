@@ -73,6 +73,10 @@ public:
 	/// <returns></returns>
 	Vector3 GetWorldTransform3DReticle();
 
+	bool IsDead() const { return isDead_; }
+
+	bool IsTitle() const { return isTitle_; }
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -82,6 +86,7 @@ private:
 
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+	//uint32_t textureGameover_ = 0u;
 
 	//キーボード入力
 	Input* input_ = nullptr;
@@ -93,12 +98,26 @@ private:
 	std::list<PlayerBullet*> bullets_;
 
 	//当たり判定のための半径
-	const float radius_ = 1.0f;
+	const float radius_ = 1.8f;
 
 	// 3Dレティクル用ワールドトランスフォーム
 	WorldTransform worldTransform3DReticle_;
 
 	// 2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
+
+	// 2D画像
+	Sprite* spriteTitle_ = nullptr;
+	Sprite* spriteGameOver_ = nullptr;
+	Sprite* spriteGameClear_ = nullptr;
+
+	// タイトル表示フラグ
+	bool isTitle_ = true;
+
+	// クリアタイム
+	uint32_t clearTime_ = 4950;
+
+	// デスフラグ
+	bool isDead_ = false;
 
 };
